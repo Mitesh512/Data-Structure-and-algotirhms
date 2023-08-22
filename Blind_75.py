@@ -109,12 +109,19 @@ def push_zeros_to_right(arr):
     return arr
 
 
-    
-    
+def containsDuplicate(nums):
+    # Brute Force Approach
+
+    for i in range(len(nums)-1):
+        for j in range(i+1,len(nums)):
+            if nums[i] == nums[j]:
+
+                return "true"
+    return "false"
 
         
 if __name__ == "__main__":
-    arr = [98,0,41,0,2,0,3,2,1,34,4,56,37,0,]
-    result = push_zeros_to_right(arr)
+    arr = [1,2,3,4]
+    result = containsDuplicate(arr)
     print(result)
 

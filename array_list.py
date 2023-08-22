@@ -125,7 +125,7 @@ def longest_sub_array_with_k_sum(arr, k):
 
 
 
-def longestSubarrayWithSumK(a: [int], k: int) -> int:
+def longestSubarrayWithSumK(a , k: int) -> int:
     # Write your code here
     ## Brute Force Solution:
     """
@@ -178,9 +178,9 @@ def longestSubarrayWithSumK(a: [int], k: int) -> int:
     }
 
     """
-    pref_sum = 0
     arr_sum = 0
     longest_arr_len = 0
+    longest_arr = []
     my_hashmap = {}
 
     for i in range(len(a)):
@@ -207,5 +207,6 @@ if __name__ == "__main__":
     # longest_arr =longest_sub_array_with_k_sum(arr,11)
     # print(longest_arr)
     longest_arr_len = longestSubarrayWithSumK(arr,11)
+    print(longest_arr_len)
     print(longest_arr_len)
     
