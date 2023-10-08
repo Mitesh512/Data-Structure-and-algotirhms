@@ -26,21 +26,21 @@ def maxProfit(prices):
 
 # Find Duplicate in array:
 def find_duplicate(arr):
-    # Brute Force Approach:
+    # Brute Force Approach: TC O(n^2), SC O(1)
     # for i in range(len(arr)):
     # 	for j in range(i+1,len(arr)):
     # 		if arr[i] == arr[j]:
     # 			return True
     # return False
 
-    # Better Approach
+    # Better Approach  TC O(n + nlogn), SC O(1)
     # arr = sorted(arr)
     # for i in range(len(arr)-1):
     # 	if arr[i] == arr[i+1]:
     # 		return True
     # return False
 
-    # Optimal
+    # Optimal  TC O(n), SC O(n)
     ele_count_dict = {}
     for i in arr:
         if i in ele_count_dict.keys():
@@ -119,6 +119,43 @@ def containsDuplicate(nums):
                 return "true"
     return "false"
 
+
+from typing import *
+
+def subarrayWithMaxProduct(arr : List[int]) -> int:
+    # Write your code here.
+    # Brute Force Approach TC : O(N^2) SC O(1)
+    # max_product = 1
+    # for i in range(len(arr)):
+    #     product = arr[i]
+    #     max_product = max(max_product,product)
+    #     for j in range(i+1,len(arr)):
+    #         product *= arr[j]
+    #         max_product = max(max_product,product)
+    
+    # return max_product
+
+    # Better Approach: TC O(n), SC: O(1)
+
+
+    n = len(arr)
+    p=1
+    s=1 
+    max_product = -10**7
+    for i in range(n):
+        if(p==0):
+            p=1
+
+        if(s==0):
+            s=1
+
+        p = p*arr[i]
+        s = s*arr[n-i-1]
+
+        max_product = max(max_product,max(p,s))
+
+    return max_product
+        
         
 if __name__ == "__main__":
     arr = [1,2,3,4]

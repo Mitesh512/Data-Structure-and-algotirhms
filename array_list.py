@@ -199,6 +199,64 @@ def longestSubarrayWithSumK(a , k: int) -> int:
     return longest_arr_len
 
 
+# Rotate the array by 1 element:
+def rotate_arr_by_1(arr):
+    fe = arr[0]
+    for i in range(1,len(arr)):
+        arr[i-1] = arr[i]
+    arr[len(arr)-1] = fe
+
+    return arr
+
+def rotate_arr_by_dplaces(arr,d):
+    if d >=len(arr):
+        d = d%len(arr)
+    if d ==0:
+        return arr
+    temp_arr = arr[0:d]
+    arr[0:len(arr)-d] = arr[d:len(arr)]
+    arr[len(arr)-d:len(arr)] = temp_arr
+    return arr
+
+
+def rotate_right(arr):
+    temp = arr[len(arr)-1]
+    for i in range(len(arr)-1,0,-1):
+        arr[i] = arr[i-1]
+    arr[0] = temp
+    return arr
+
+
+def find_product(arr):
+	# Brute Force Apporach
+
+	# product_arr = []
+	# for i in range(len(arr)):
+	# 	product = 1
+	# 	for j in range(len(arr)):
+	# 		if i != j:
+	# 			product = product * arr[j]
+	# 	product_arr.append(product)
+	# return product_arr
+
+	# Better Approach
+    n = len(arr)
+    product_arr = [1] * n
+    pre =1
+    post = 1
+    for i in range(n):
+        print("*** ---- *****:",i)
+        product_arr[i] *= pre 
+        print(product_arr, pre)
+        pre *= arr[i]
+        print(pre)
+        product_arr[n-i-1] *=  post
+        print(product_arr,post)
+        post *=  arr[n-i-1]
+        print(post)
+        print()
+    return product_arr
+
 
 if __name__ == "__main__":
     arr = [1,2,3,1,1,2,1,5,1,2,-1,1,-2,2,1,0,0,0,1,1,3,1,1,1,10,1,1,1]
