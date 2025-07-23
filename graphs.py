@@ -1,188 +1,561 @@
-import queue
+"""
+Graph Traversal: (Adj List, Adj Matrix)
+    DFS
+    BFS
 
 
-# Creating Graphs from the input links
-def generate_default_dict_graph(adj_list):
-    from collections import defaultdict
+Shortest Path (Edge weight):
+    - Dijkstra's Algorithm (Positive weights) TC: E logs(V) ---> shortest path between a source to all nodes (destination node) with  positive edge weights
+    - Bellman-Ford (Negative Weightts): TC: ExV ---> shortest path between a source to all nodes (destination node) destination node with even with negative weights,  (Negative Cycle Identification)
+    - Floyd Warshall: TC (V^3): shortest path from all nodes to all nodes
+
+# ---- Done with above
+Minimum Spanning Tree: It will have V-1 Edges. ( to connect to V points we just need V-1 Edges)
+    - Prim's Algorithm
+    - Kruskal's Algorithm (Disjopint Set Data Structure)
+
+Topological Sort: (Directed Graphs, depndency matters)
+    - Indegree
+
+Bipartitie Graph: (Not possible for odd cycles)
+    - To separate graph into two entities.
+    
+"""
+
+from collections import deque
+def dfs_adj_list(n,adj_list):
+    """
+    you are given nodes n and an adj_list {1:[1,2]}
+    consider 0 based node indexing.
+    It is given that the graph can have components as well as connected, you need to traverse the whole array
+    perform dfs and pring elements or you can put the traversal in an array
+    
+    adj_list = {
+        0:[1,2,3],
+        1:[0,3],
+        2:[0,4],
+        3:[1,0,5],
+        4:[2,5],
+        5:[4,3], 
+    }
+    visited = set() --> {0,1,3,5,4,2}
+    traversal = []-->[0,1,3,5,4,2]    
+    TC : (V+E)
+    """
+    visited = set()
+    traversal = []
+    
+    def dfs(node,visited, traversal):
+        visited.add(node)
+        traversal.append(node)
+        for nbr in adj_list[node]:
+            if nbr not in visited:
+                visited,traversal = dfs(nbr,visited, traversal)
+        return visited, traversal   
+    
+    for i in range(n):
+        if i not in visited:
+            visited, traversal = dfs(i,visited, traversal)
+    return traversal
+
+adj_list = {
+        0:[1,2,3],
+        1:[0,3],
+        2:[0,4],
+        3:[1,0,5],
+        4:[2,5],
+        5:[4,3], 
+    }
+# print(dfs_adj_list(6,adj_list))
+
+def bfs_adj_list(n,adj_list):
+    """
+    you are given nodes n and an adj_list {1:[1,2]}
+    consider 0 based node indexing.
+    It is given that the graph can have components as well as connected, you need to traverse the whole array
+    perform bfs and pring elements or you can put the traversal in an array
+    TC : (V+E)
+    adj_list = {
+        0:[1,2,3],
+        1:[0,3],
+        2:[0,4],
+        3:[1,0,5],
+        4:[2,5],
+        5:[4,3], 
+    }
+    visited = set() --> {0,1,2,3,4,5}
+    traversal = []-->[0,1,2,3,4,5]
+    q = 0,1,2,3,4,5 []
+    """
+    
+    traversal = []
+    visited = set()
+    for i in range(n):
+        if i not in visited:
+            q = deque([i])
+            visited.add(i)
+            while q:
+                node = q.popleft()
+                traversal.append(node)
+                for nbr in adj_list[node]:
+                    if nbr not in visited:
+                        visited.add(nbr)
+                        q.append(nbr)
+    return traversal
+                        
+                
+# print(bfs_adj_list(6,adj_list))
+
+
+def dfs_adj_matrix(matrix):
+    """
+    Perform dfs on adjecency matrix (NxN), consider 0 based indexing for the nodes, size of the matrix will be n
+    n is equal to number of nodes in the graph
+    return traversal
+    the graph can have components
+    Here is an example of the matrix
+    matrix =[
+         0  1  2  3  4  5
+    0   [0, 1, 1, 1, 0, 0],
+    1   [1, 0, 0, 1, 0, 0],
+    2   [1, 0, 0, 0, 1, 0],
+    3   [1, 1, 0, 0, 0, 1],
+    4   [0, 0, 1, 0, 0, 1],
+    5   [0, 0, 0, 1, 1, 0]
+    ]
+    visited = {} --> {0,1,3,5,4,2}
+    traversal = [] --> [0,1,3,5,4,2]
+    dfs call--> 0, 1, 3, 5,4,2
+    """
+    visited = set()
+    traversal = []
+    def dfs(node,visited,traversal):
+        visited.add(node)
+        traversal.append(node)
+        for j in range(len(matrix)):# range(6)--> 0,1,2,3,4,5
+            if matrix[node][j] ==1 and j not in visited:
+                visited, traversal = dfs(j,visited,traversal)
+        return visited, traversal
+    # we need to traverse to each node
+    for i in range(len(matrix)): # range(6)--> 0,1,2,3,4,5
+        if i not in visited:
+            visited, traversal = dfs(i,visited,traversal)
+    
+    return traversal
+        
+    
+    
+
+matrix =[
+        [0, 1, 1, 1, 0, 0],
+        [1, 0, 0, 1, 0, 0],
+        [1, 0, 0, 0, 1, 0],
+        [1, 1, 0, 0, 0, 1],
+        [0, 0, 1, 0, 0, 1],
+        [0, 0, 0, 1, 1, 0]
+    ]
+
+
+# print(dfs_adj_matrix(matrix))
+
+
+
+def bfs_adj_matrix(matrix):
+    """ Perform bfs on adjecency matrix, consider 0 based indexing for the nodes, size of the matrix will be n
+    n is equal to number of nodes in the graph
+    return traversal
+    the graph can have components
+    
+    Here is an example of the matrix
+    matrix =[
+         0  1  2  3  4  5
+    0   [0, 1, 1, 1, 0, 0],
+    1   [1, 0, 0, 1, 0, 0],
+    2   [1, 0, 0, 0, 1, 0],
+    3   [1, 1, 0, 0, 0, 1],
+    4   [0, 0, 1, 0, 0, 1],
+    5   [0, 0, 0, 1, 1, 0]
+    ]
+    visited = {} --> {0,1,2,3,4,5}
+    traversal = [] --> [0,1,2,3,4,5]
+    q = 0,1,2,3,4,5  <-- []
+    """
+    n = len(matrix) # 6
+    visited = set()
+    traversal = []
+    for i in range(n): # 0,1,2,3,4,5
+        if i not in visited:
+            q = deque([i])
+            visited.add(i)
+            while q:
+                node = q.popleft()
+                traversal.append(node)
+                for j in range(n): # 0,1,2,3,4,5
+                    if matrix[node][j]==1 and j not in visited:
+                        visited.add(j)
+                        q.append(j)
+    return traversal
+                        
+                
+        
+# print(bfs_adj_matrix(matrix))
+
+
+
+
+
+
+
+
+
+from collections import deque, defaultdict
+
+# Approach 1: Graph input as Edge List
+def build_graph_from_edges(edges):
+    # graph = {} 
+    # for u ,v in edges:
+    #     if u in graph.keys():
+    #         graph[u].append(v)
+    #     else:
+    #         graph[u] = [v]
+    #     if v in graph.keys():
+    #         graph[v].apend(u)
+    #     else:
+    #         graph[v] = [u]
+    # return graph
+    
+    """
+
+    Edges: [[0,1], [0,2], [0,3], [1,3], [2,4], [3,5], [4,5], [9,10]] 
+    
+    6, 7, 8 are just nodes
+    
+    graph= {
+        0:[1,2,3],
+        1:[0,3],
+        2:[0,4],
+        3:[1,0,5],
+        4:[2,5],
+        5:[4,3],
+        6:[],
+        7:[],
+        8:[],
+        9:[10],
+        10:[9]
+    }
+    
+    """
+    
+    
     graph = defaultdict(list)
-    for ls in adj_list:
-        u,v = ls
+    for u, v in edges:
         graph[u].append(v)
-        graph[v].append(u)
+        graph[v].append(u)  # Assuming undirected graph
     return graph
 
-def generate_graph(adj_list):
-    graph = {}
-    for ls in adj_list:
-        u,v = ls
-        if graph.get(u):
-            graph[u].append(v)
-        else:
-            graph[u] = [v]
 
-        if graph.get(v):
-            graph[v].append(u)
-        else:
-            graph[v] = [u]
-    return graph 
+def build_adjacency_graph_from_edges(edges):
+    # get vertices first:
+    V = 0
+    for u,v in edges:
+        V = max(V, u, v)
     
-def BFS(graph,starting_node):
-    """ 
-    Steps in graph:
-    what you need:
-    Traversal Array,
-    Queue
-    has_visited_arr
-    In BFS, we start with a “starting” node, mark it as visited, and push it into the queue data structure.
-    In every iteration, we pop out the node ‘v’ and put it in the solution vector, as we are traversing this node.
-    All the unvisited adjacent nodes from ‘v’ are visited next and are pushed into the queue. The list of adjacent neighbors of the node can be accessed from the adjacency list.
-    Repeat steps 2 and 3 until the queue becomes empty, and this way you can easily traverse all the nodes in the graph.
-    """
+    # if graph is strating from zero we will add 1 to V
+    V = V+1
+    matrix_graph = [[0 for _ in range(V)] for _ in range(V)]
+    
+    for u,v in edges:
+        matrix_graph[u][v] = 1
+        matrix_graph[v][u] = 1
+    return matrix_graph
 
-    # initialize the params for the BFS
-    q = queue.Queue() # put and get operation
-    vis_arr = set()
-    traversal_arr = []
-    vis_arr.add(starting_node)
-    q.put(starting_node)
 
-    while q.qsize() > 0:        
-        nd = q.get()
-        traversal_arr.append(nd)
-        for nbr in graph[nd]:
-            if nbr not in vis_arr:
-                q.put(nbr)
-                vis_arr.add(nbr)
+# Approach 2: Graph input as Adjacency Matrix
+def build_graph_from_matrix(matrix):
+    graph = defaultdict(list)
+    n = len(matrix)
+    for i in range(n):
+        for j in range(n):
+            if matrix[i][j] == 1:  # Edge exists
+                graph[i].append(j)
+                # below line is not required as it will be convered directly
+                # graph[j].append(i)
+    return graph
 
-    return traversal_arr
 
-def BFS_all_without_starting_node(graph):
+# BFS for adjecency list Traversal
+def bfs(adj_list, start):
+    visited = set([start])
+    queue = deque([start])
+    while queue:
+        node = queue.popleft()
+        print(node, end=' ')
+        for neighbor in adj_list[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)  # mark as visited when enqueuing
+                queue.append(neighbor)
+
+
+# DFS Traversal for adjacency list (Recursive)
+def dfs(adj_list,node,visited):
+    if node not in visited:
+        print(node, end=" ")
+        visited.add(node)
+        for nbr in adj_list[node]:
+            dfs(adj_list,nbr,visited)
+
+
+
+from collections import deque
+
+def bfs_matrix(adj_matrix, start):
+    n = len(adj_matrix)
     visited = set()
-    traversal_arr = []
-    for nd in graph.keys():
-        if nd not in visited:
-            comp_arr = []
-            q = queue.Queue()
-            if len(graph[nd])>0:
-                q.put(nd)
+    queue = deque([start])
+    visited.add(start)
+    while queue:
+        node = queue.popleft()
+        print(node, end=' ')
+        for neighbor in range(n):
+            if adj_matrix[node][neighbor] == 1 and neighbor not in visited:
+                visited.add(node)
+                queue.append(neighbor)
 
-            while q.qsize() > 0:
-                curr_nd = q.get()
-                if curr_nd not in visited:
-                    comp_arr.append(curr_nd)
-                    visited.add(curr_nd)
-                    for v in graph[curr_nd]:
-                        if v not in visited:
-                            q.put(v)
-            if len(comp_arr) > 0:
-                traversal_arr.extend(comp_arr)
-    return traversal_arr
 
-def BFS_all(graph, starting_node):
-    visited = set()
-    traversal_arr = []
-    q = queue.Queue()
-    q.put(starting_node)
-    visited.add(starting_node)
-    
-    while q.qsize() >0:
-        curr_nd = q.get()
-        traversal_arr.append(curr_nd)
-        for v in graph[curr_nd]:
-            if v not in visited:
-                q.put(v)
-                visited.add(v)
-    
-    for nd in graph.keys():
-        if nd not in visited:
-            if len(graph[nd])>0:
-                q.put(nd)
-                visited.add(nd)
-                while q.qsize()>0:
-                    curr_v = q.get()
-                    traversal_arr.append(curr_v)
+        
 
-                    for nbr in graph[curr_v]:
-                        if nbr not in visited:
-                            q.put(nbr)
-                            visited.add(nbr)
-
-    return traversal_arr
-
-# DFS Depth First Search
-def DFS(graph, start_node,visited,traversal_arr):
-    """ 
-    create  
-    visited_arr = []
-    traversal_arr = []
-    
-    In DFS, we start with a node ‘v’, mark it as visited and store it in the solution vector. 
-    It is unexplored as its adjacent nodes are not visited.
-    
-    We run through all the adjacent nodes, and call the recursive dfs function to explore the node ‘v’ which has not been visited previously. 
-    This leads to the exploration of another node ‘u’ which is its adjacent node and is not visited. 
-    
-    The adjacency list stores the list of neighbours for any node. Pick the neighbour list of node ‘v’ and run a for loop on the 
-    list of neighbours (say nodes ‘u’ and ‘w’ are in the list). We go in-depth with each node. When node ‘u’ is explored completely 
-    then it backtracks and explores node ‘w’.
-    
-    This traversal terminates when all the nodes are completely explored. 
+def dfs_adj_matrix(matrix):
     """
-    visited.add(start_node)
-    traversal_arr.append(start_node)
-
-    for nbr in graph[start_node]:
-        if nbr not in visited:
-            DFS(graph,nbr,visited,traversal_arr)
-
-    return visited,traversal_arr
-
-
-def DFS_all(graph,startig_node):
-
-    visited, traversal_arr = DFS(graph, startig_node,set(),[])
-
-    for nd in graph.keys():
-        if nd not in visited:
-            visited,traversal_arr = DFS(graph, nd,visited,traversal_arr)
+    There is a difference from number of islands problem.
+    Here in adjacency matrix it represents how one node is connected
+    to other node
     
-    return traversal_arr
+    M = [
+  [0, 1, 0],  # Node 0 is connected to Node 1
+  [1, 0, 1],  # Node 1 is connected to Nodes 0 and 2
+  [0, 1, 0]   # Node 2 is connected to Node 1
+    ]
+    if we see it ideally 0,1 and 2 are connected. there is only 1 component
+    
+    In case of number of island problem this will give us 4 different islands
+    
+    In this case understand it like a adjacency list only
+    Now perform DFS
+    
+    # Adjacency Matrix  (nxn) # nodes = n 
+#0 1 2
+[0,1,0], 0
+[1,0,1], 1
+[0,1,0], 2
+
+output = 1
+
+# Provinces
+# # Number of nodes: n = 3
+[[1,1,0],
+ [1,1,0],
+ [0,0,1]]
+Output: 2
+
+[[1,0,0],
+ [0,1,0],
+ [0,0,1]]
+Output: 3
+
+# Islands # Number of nodes: mxn ---> 4x5 = 20
+["1","1","1","1","0"],
+["1","1","0","1","0"],
+["1","1","0","0","0"],
+["0","0","0","0","0"]
+Output: 1
+
+# Number of nodes: mxn ---> 4x5 = 20
+["1","1","0","0","0"],
+["1","1","0","0","0"],
+["0","0","1","0","0"],
+["0","0","0","1","1"]
+Output: 3
+
+    """
+    n = len(matrix)
+    visited = [0 for _ in range(n)]
+    count = 0
+    
+    def dfs(node):
+        if visited[node] == 0:
+            visited[node] = 1
+            # I will check nbrs or friends of node to find to which it is connected
+            # this basically means I will be traversing the node(th) row the adjacency matrix
+            # if lets say zeroth node has visited 1 and 2 
+            for j in range(n):
+                if matrix[node][j] == 1 and visited[j]==0:
+                    dfs(j)
+                    
+    for i in range(n):
+        if visited[i] == 0:
+            count +=1
+            dfs(i)
+            
+    return count
+    
+    
+                    
+
+              
+class Disjointset:
+    def __init__(self,n):
+        # initialzise each element as its own parent
+        self.parent = list(range(n+1))
+        self.rank = [0 for _ in range(n+1)]
+        self.size = [1 for _ in range(n+1)]
+        print(self.rank)
+        print(self.size)
+        
+    
+    def find(self,x):
+        if self.parent[x] == x:
+            # ultimate parent points to himself
+            return x
+        # find the ultimate parent until you find the it
+        return self.find(self.parent[x])
+      
+    def union_by_rank(self,x,y):
+        # Union by Rank
+        px = self.find(x)
+        py = self.find(y)
+        
+        if px == py:
+            # there is no need to perfom union the ultimate parent is same
+            return 
+        
+        # Attach smaller rank to larger rank tree or graph
+        print(x,y,px,py,self.rank)
+        if self.rank[px] < self.rank[py]:
+            self.parent[px] = py
+        elif self.rank[px] > self.rank[py]:
+            self.parent[py] = px
+        else:
+            # if both are of equal rank merge them
+            # either way is fine but whoever you are making parent increase its rank
+            self.parent[py] = px
+            self.rank[px] += 1
+    
+    def union_by_size(self,x,y):
+        px = self.find(x)
+        py = self.find(y)
+        
+        if px==py:
+            return 
+
+        if self.size[px] < self.size[py]:
+            self.parent[px] = py
+            self.size[py] += self.size[px]
+        else:
+            self.parent[py] = px
+            self.size[px] += self.size[py]
+            
+            
+    
+    def connected(self,x,y):
+        return self.find(x) == self.find(y)
+
+        
+def DAG(number_of_nodes, edges):
+    """
+    This is code for Directed Acyclic Graph
+    """
+    graph = defaultdict(list)
+    indegree = [0] * number_of_nodes
+
+    for u, v in edges:
+        graph[u].append(v)
+        indegree[v] += 1
+
+    # Topological Sort using Kahn's Algorithm
+    queue = deque([i for i in range(number_of_nodes) if indegree[i] == 0])
+    topological_order = []
+
+    while queue:
+        node = queue.popleft()
+        topological_order.append(node)
+
+        for neighbor in graph[node]:
+            indegree[neighbor] -= 1
+            if indegree[neighbor] == 0:
+                queue.append(neighbor)
+
+    return topological_order if len(topological_order) == number_of_nodes else []
+    
+        
+    
 
 
-def dfs(graph,nd,visited,comp):
-	visited.add(nd)
-	comp.append(nd)
-	for nbr in graph[nd]:
-
-		if nbr not in visited:
-			dfs(graph,nbr,visited,comp)
-
-	return	comp,visited
-
-def get_dfs_traversal(graph):
-	components = []
-	visited = set()
-	for nd in graph.keys():
-		if nd not in visited:
-			comp = []
-			comp, visited = dfs(graph,nd,visited,comp)
-			components.append(comp)
-	return components
 
 
 
-if __name__ == '__main__':
-    graph_list = [(1, 7), (1, 3), (1, 2), (2, 3), (5, 6), (6, 8) ]
-    # graph_list = [(1,2),(1,3),(2,4),(3,4),(3,5),(4,5)] 
-    graph = generate_graph(graph_list)
-    traversal_arr = BFS(graph, starting_node=1)
-    traversal_arr
-
-    test = get_dfs_traversal(graph)
-
-
-    traversal_arr = DFS_all(graph,1)
-    traversal_arr
-
-
+if __name__ == "__main__":
     pass
+    
+    # ds = Disjointset(5)
+    # ds.union_by_rank(0,1)
+    # ds.union_by_rank(2,3)
+    # print(ds.connected(0,1))
+    # print(ds.connected(0,2))
+    # ds.union_by_rank(1,2)
+    # print(ds.connected(0,3))
+    
+    # ------------------ TEST CASE 1: EDGE LIST -------------------
+    # # print("Graph Input: Edge List")
+    # edges = [[0, 1], [0, 2], [1, 3], [2, 4],[0,3],[4,5],[3,5]]
+    
+    # adj_list = {
+    #     0:[1,2,3],
+    #     1:[0,3],
+    #     2:[0,4],
+    #     3: [1,0,5],
+    #     4:[2,5],
+    #     5:[4,3], 
+    # }
+    # matrix =[
+    #     [0, 1, 1, 1, 0, 0],
+    #     [1, 0, 0, 1, 0, 0],
+    #     [1, 0, 0, 0, 1, 0],
+    #     [1, 1, 0, 0, 0, 1],
+    #     [0, 0, 1, 0, 0, 1],
+    #     [0, 0, 0, 1, 1, 0]
+    # ]
+    
+    # graph1 = build_graph_from_edges(edges)
+
+    # print("BFS Traversal:")
+    # bfs(graph1, 0)
+
+    # print("\nDFS Traversal:")
+    # visited = set()
+    # dfs(graph1, 0, visited)
+
+    # print("\n\n------------------")
+
+    # # # ------------------ TEST CASE 2: ADJACENCY MATRIX -------------------
+    # print("\nGraph Input: Adjacency Matrix")
+    # matrix = [
+    #     [1, 1, 1, 0, 0],
+    #     [1, 1, 1, 1, 0],
+    #     [1, 0, 1, 0, 1],
+    #     [0, 1, 1, 1, 1],
+    #     [0, 0, 1, 0, 1]
+    # ]
+    # adj_2 = build_graph_from_matrix(matrix)
+
+    # print("BFS Traversal:")
+    # bfs(adj_2, 0)
+
+    # print("\nDFS Traversal:")
+    # visited = set()
+    # dfs(adj_2, 0, visited)
+    
+    # bfs_traversal = bfs_matrix(matrix, (0,0))
+    # print("This is my Matrix BFS traversal",bfs_traversal)
+
+    # dfs_traversal = dfs_matrix(matrix,(0,0))
+    # print("This is DFS traversal: ", dfs_traversal)
