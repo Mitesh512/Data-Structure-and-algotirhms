@@ -25,11 +25,11 @@ class LinkedList:
             last_node.next = new_node
         
     def insert_at_position(self,data,position):
-        if position <0:
+        if position <=0:
             # invalid case
             return 
 
-        if position==0:
+        if position==1:
             self.insert_at_beginning(data)
             return 
 
@@ -48,11 +48,33 @@ class LinkedList:
         curr_node.next = new_node
     
     
-    # def delete_node(self,data):
+    def delete_node(self, position):
+        if position <= 0:
+            return "Invalid Case"
         
-    #     curr_node = self.head
+        if position == 1:
+            # delete the head
+            curr_node = self.head
+            self.head = self.head.next
+            curr_node.next = None
+            del curr_node
         
-    #     while curr_node and curr_node.data==data:
+        curr_pos = 1
+        curr_node = self.head
+        
+        while curr_node.next and curr_pos < position:
+            curr_node = curr_node.next
+            curr_pos += 1
+        
+        if curr_node.next is None:
+            return "Cannot delete None"
+
+        temp = curr_node.next
+        curr_node.next = curr_node.next.next
+        temp.next = None
+        del temp
+        
+            
     
     def display(self):
         curr_node = self.head
@@ -74,12 +96,6 @@ my_list.display() # Output: 0 -> 1 -> 3 -> 2 -> None
         
         
         
-        
-
-
-
-
-
 
 
 """

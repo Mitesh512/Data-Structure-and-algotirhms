@@ -59,7 +59,6 @@ class Node:
         self.prev = None
 
 class LRUCache:
-    
     def __init__(self, capacity: int):
         self.capacity = capacity
         self.cache = {} # key : DLL
@@ -122,10 +121,6 @@ class LRUCache:
                 self.remove(lru)
                 # delete this node lru from cache so it is again in capacity
                 del self.cache[lru.key]
-            
-
-        
-        
 
 
 # Your LRUCache object will be instantiated and called as such:

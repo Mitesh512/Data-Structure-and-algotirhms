@@ -1,3 +1,4 @@
+from typing import List
 # fixed size sliding window:
 def maximum_sum_of_k_elements_in_arr(arr,k):
     window_sum = sum(arr[:k])
@@ -197,7 +198,6 @@ def count_word_occurrences(s: str, word: str) -> int:
         curr_word = s[i:i+k]
         if curr_word == word:
             word_freq += 1
-    
     return word_freq
 
 # s = "barfoofoobarbar"
@@ -228,14 +228,11 @@ def detect_consecutive_substrings(s,words):
     """
     Detect a group of len(words) consecutive substrings that form a
     valid concatenation
-    
     Problem: Given string s, and list of words, 
     check for each window of total length k * len(words), 
     if it's a valid permutation of all words.
-    
     s = "barfoofoobarthe"
     words = ["bar", "foo", "the"]
-
     """
     n = len(s)
     k = len(words[0])
@@ -248,7 +245,6 @@ def detect_consecutive_substrings(s,words):
         
     consecutive_substrings_for_all_words = []
     consecutive_substrings_for_all_words_indices = []  # Instead of s[i:i+substr_len]
-
     for i in range(n-substr_len+1):
         curr_word = s[i:i+k]
         if curr_word in word_freq:
@@ -422,7 +418,6 @@ def find_str_anomalies(s,words):
     substr_len = k*len(words)
     if n<k:
         return []
-    
     # I need to find all words I can create a map, with frequency of the words to check the words
     word_map = {}
     for word in words:
@@ -433,12 +428,10 @@ def find_str_anomalies(s,words):
     str_anomalies_indices = []
     
     while r < n-substr_len+1:
-
         # check a sub_str of len k from index r if it is in words we will check rest of the string
         curr_word = s[r:r+k]
         if curr_word in word_map:
             # I have foudn a word now I can check till len of substring of words if that actually contains all the words with same frequency
-
             curr_str_word_map = {}
             j = r
             while j < r+substr_len:
@@ -449,7 +442,6 @@ def find_str_anomalies(s,words):
                 else:
                     # if the word is not in word there is no point in exploring letter part
                     break
-                
                 j += k
             
             if curr_str_word_map == word_map:
